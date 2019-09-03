@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "573471926109",
+    "firebase_url": "https://flashchathaas.firebaseio.com",
+    "project_id": "flashchathaas",
+    "storage_bucket": "flashchathaas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573471926109:android:f4b097942c4218ca",
+        "android_client_info": {
+          "package_name": "com.haasapp.flashchatnewfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573471926109-u2qdh90dlp020tgfgrsdfo616qjgb9n1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJf87esByrJzi7XwIecHN08P1uBDo5Mk0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573471926109-u2qdh90dlp020tgfgrsdfo616qjgb9n1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
