@@ -1,6 +1,7 @@
 package com.haasapp.flashchatnewfirebase;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -62,11 +65,23 @@ public class MainChatActivity extends AppCompatActivity {
     // TODO: Retrieve the display name from the Shared Preferences
     private void setupDisplayName()
     {
-        SharedPreferences prefs = getSharedPreferences(RegisterActivity.CHAT_PREFS, MODE_PRIVATE);
 
-        mDisplayName = prefs.getString(RegisterActivity.DISPLAY_NAME_KEY, null);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            mDisplayName = user.getDisplayName();
+        }
 
         if (mDisplayName == null)
+        {
+            for (UserInfo userInfo : user.getProviderData()) {
+                if (mDisplayName == null && userInfo.getDisplayName() != null) {
+                    mDisplayName = userInfo.getDisplayName();
+                }
+            }
+        }
+
+            if (mDisplayName == null)
         {
             mDisplayName = "Anonymous";
         }

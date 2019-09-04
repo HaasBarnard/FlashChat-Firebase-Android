@@ -2,6 +2,7 @@ package com.haasapp.flashchatnewfirebase;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +20,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -131,8 +134,8 @@ public class RegisterActivity extends AppCompatActivity {
     // TODO: Create a Firebase user
     private void createFirebaseUser() {
 
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String email = mEmailView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this,
                 new OnCompleteListener<AuthResult>() {
@@ -145,21 +148,62 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d("FlashChat", "user creation failed", task.getException());
                             showErrorDialog("Registration attempt failed");
                         } else {
-                            saveDisplayName();
-                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                            finish();
-                            startActivity(intent);
+
+                            //TODO need to first log the user in
+
+                            loginUser(email, password);
+
+
                         }
                     }
                 });
+    }
+
+    private void loginUser(String email, String password)
+    {
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                Log.d("FlashChat", "signInWithEmailAndPassword() onComplete: " + task.isSuccessful());
+
+                if (!task.isSuccessful())
+                {
+                    Log.d("FlashChat", "Failed to login: " + task.getException());
+                    showErrorDialog("There was a problem signing in");
+                }
+                else
+                {
+                    saveDisplayName();
+                }
+            }
+        });
     }
 
 
     // TODO: Save the display name to Shared Preferences
     private void saveDisplayName() {
         String displayName = mUsernameView.getText().toString();
-        SharedPreferences prefs = getSharedPreferences(CHAT_PREFS, 0);
-        prefs.edit().putString(DISPLAY_NAME_KEY, displayName).apply();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(displayName)
+                .build();
+
+        user.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("tag", "User profile updated.");
+
+                            Intent intent = new Intent(RegisterActivity.this, MainChatActivity.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    }
+                });
     }
 
 
